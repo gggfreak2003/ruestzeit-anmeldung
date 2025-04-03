@@ -7,6 +7,8 @@ parameters:
     aws_bucket_name: '%env(AWS_BUCKET_NAME)%'
     domain_list: '%env(DOMAINLIST)%'
     main_domain: '%env(MAIN_DOMAIN)%'
+    imprint_url: '%env(IMPRINT_URL)%'
+    privacy_url: '%env(PRIVACY_URL)%'
 
 
 services:

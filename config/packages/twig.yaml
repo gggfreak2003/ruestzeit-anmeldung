@@ -4,6 +4,8 @@ twig:
     globals:
         # the value is the service's id
         current_ruestzeit_service: '@App\Generator\CurrentRuestzeitGenerator'
+        imprint_url: '%imprint_url%'
+        privacy_url: '%privacy_url%'
 
 when@test:
     twig:
