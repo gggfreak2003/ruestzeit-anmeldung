@@ -332,6 +332,10 @@ class RuestzeitCrudController extends AbstractCrudController
 
             yield BooleanField::new('show_mealtype', 'Verpflegung erfragen')->setColumns(4);
 
+            yield BooleanField::new('show_registration_address', 'Adresse erfragen')->setColumns(4);
+
+            yield BooleanField::new('show_birthday', 'Geburtstag erfragen')->setColumns(4);
+
             // yield FormField::addColumn(6);
 
 

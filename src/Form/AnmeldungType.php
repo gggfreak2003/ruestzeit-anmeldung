@@ -49,17 +49,22 @@ class AnmeldungType extends AbstractType
             ])
             ->add('firstname', TextType::class)
             ->add('lastname', TextType::class)
-            ->add('birthdate', null, [
-                'widget' => 'single_text',
-                'format' => 'dd.MM.yyyy',
-                // 2. Disable HTML5 option
-                'html5' => false
-            ])
-            ->add('postalcode', TextType::class)
-            ->add('city', TextType::class)
-            ->add('address', TextType::class)
             ->add('phone', TextType::class)
             ->add('email', EmailType::class);
+
+        if ($currentRuestzeit->isShowRegistrationAddress()) {
+            $builder->add('postalcode', TextType::class)
+            ->add('city', TextType::class)
+            ->add('address', TextType::class);
+        }
+
+        if ($currentRuestzeit->isShowBirthday()) {
+            $builder->add('birthdate', DateType::class, [
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'dd.MM.yyyy',
+            ]);
+        }
 
         if ($currentRuestzeit->isAskSchoolclass()) {
             $builder->add('schoolclass', TextType::class, [
@@ -109,58 +114,56 @@ class AnmeldungType extends AbstractType
             ]);
 
         // Add custom fields based on Ruestzeit configuration
-        if ($currentRuestzeit) {
-            foreach ($currentRuestzeit->getCustomFields() as $customField) {
-                $fieldName = 'custom_field_' . $customField->getId();
+        foreach ($currentRuestzeit->getCustomFields() as $customField) {
+            $fieldName = 'custom_field_' . $customField->getId();
 
-                switch ($customField->getType()) {
-                    case CustomFieldType::INPUT:
-                        $builder->add($fieldName, TextType::class, [
-                            'mapped' => false,
-                            'label' => $customField->getTitle(),
-                            'required' => !$customField->isOptional(),
-                        ]);
-                        break;
-                    case CustomFieldType::TEXTAREA:
-                        $builder->add($fieldName, TextareaType::class, [
-                            'mapped' => false,
-                            'label' => $customField->getTitle(),
-                            'required' => !$customField->isOptional(),
-                        ]);
-                        break;
-                    case CustomFieldType::DATE:
-                        $builder->add($fieldName, DateType::class, [
-                            'mapped' => false,
-                            'label' => $customField->getTitle(),
-                            'required' => !$customField->isOptional(),
-                            'widget' => 'single_text',
-                            'html5' => false,
-                            'format' => 'dd.MM.yyyy',
-                        ]);
-                        break;
-                    case CustomFieldType::CHECKBOX:
-                        $options = $customField->getOptions() ?? [];
+            switch ($customField->getType()) {
+                case CustomFieldType::INPUT:
+                    $builder->add($fieldName, TextType::class, [
+                        'mapped' => false,
+                        'label' => $customField->getTitle(),
+                        'required' => !$customField->isOptional(),
+                    ]);
+                    break;
+                case CustomFieldType::TEXTAREA:
+                    $builder->add($fieldName, TextareaType::class, [
+                        'mapped' => false,
+                        'label' => $customField->getTitle(),
+                        'required' => !$customField->isOptional(),
+                    ]);
+                    break;
+                case CustomFieldType::DATE:
+                    $builder->add($fieldName, DateType::class, [
+                        'mapped' => false,
+                        'label' => $customField->getTitle(),
+                        'required' => !$customField->isOptional(),
+                        'widget' => 'single_text',
+                        'html5' => false,
+                        'format' => 'dd.MM.yyyy',
+                    ]);
+                    break;
+                case CustomFieldType::CHECKBOX:
+                    $options = $customField->getOptions() ?? [];
 
-                        $builder->add($fieldName, ChoiceType::class, [
-                            'mapped' => false,
-                            'label' => $customField->getTitle(),
-                            'required' => !$customField->isOptional(),
-                            'choices' => array_combine($options, $options),
-                            'expanded' => true,
-                            'multiple' => true,
-                        ]);
-                        break;
-                    case CustomFieldType::RADIO:
-                        $options = $customField->getOptions() ?? [];
-                        $builder->add($fieldName, ChoiceType::class, [
-                            'mapped' => false,
-                            'label' => $customField->getTitle(),
-                            'required' => !$customField->isOptional(),
-                            'choices' => array_combine($options, $options),
-                            'expanded' => true,
-                        ]);
-                        break;
-                }
+                    $builder->add($fieldName, ChoiceType::class, [
+                        'mapped' => false,
+                        'label' => $customField->getTitle(),
+                        'required' => !$customField->isOptional(),
+                        'choices' => array_combine($options, $options),
+                        'expanded' => true,
+                        'multiple' => true,
+                    ]);
+                    break;
+                case CustomFieldType::RADIO:
+                    $options = $customField->getOptions() ?? [];
+                    $builder->add($fieldName, ChoiceType::class, [
+                        'mapped' => false,
+                        'label' => $customField->getTitle(),
+                        'required' => !$customField->isOptional(),
+                        'choices' => array_combine($options, $options),
+                        'expanded' => true,
+                    ]);
+                    break;
             }
         }
 

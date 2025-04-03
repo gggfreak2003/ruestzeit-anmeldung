@@ -101,6 +101,12 @@ class Ruestzeit
     #[ORM\Column(length: 10)]
     private ?string $admincolor = null;
 
+    #[ORM\Column]
+    private ?bool $showRegistrationAddress = null;
+
+    #[ORM\Column]
+    private ?bool $showBirthday = null;
+
     /**
      * @var Collection<int, LanguageOverwrite>
      */
@@ -530,6 +536,30 @@ class Ruestzeit
     public function setAskSchoolclass(bool $ask_schoolclass): static
     {
         $this->ask_schoolclass = $ask_schoolclass;
+
+        return $this;
+    }
+
+    public function isShowRegistrationAddress(): ?bool
+    {
+        return $this->showRegistrationAddress;
+    }
+
+    public function setShowRegistrationAddress(bool $showRegistrationAddress): static
+    {
+        $this->showRegistrationAddress = $showRegistrationAddress;
+
+        return $this;
+    }
+
+    public function isShowBirthday(): ?bool
+    {
+        return $this->showBirthday;
+    }
+
+    public function setShowBirthday(bool $showBirthday): static
+    {
+        $this->showBirthday = $showBirthday;
 
         return $this;
     }

@@ -293,45 +293,49 @@
 								{% if not customField.intern %}
 
 									{% set fieldName = 'custom_field_' ~ customField.id %}
-									<div class="field">
-										<label class="label">{{ form_label(attribute(form, fieldName)) }}</label>
-										<div class="control">
-											{% if customField.type.value == 'input' %}
-												<input class="input" type="text" name="{{ field_name(attribute(form, fieldName)) }}" value="{{ field_value(attribute(form, fieldName)) }}" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>
-											{% elseif customField.type.value == 'textarea' %}
-												<textarea class="textarea" name="{{ field_name(attribute(form, fieldName)) }}" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>{{ field_value(attribute(form, fieldName)) }}</textarea>
-											{% elseif customField.type.value == 'date' %}
-												<input class="input birthday_field" name="{{ field_name(attribute(form, fieldName)) }}" value="{{ field_value(attribute(form, fieldName)) }}" type="text" placeholder="TT.MM.JJJJ" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>
-											{% elseif customField.type.value == 'checkbox' %}
-												{{ form_widget(attribute(form, fieldName)) }}
-											{% elseif customField.type.value == 'radio' %}
-												{% for option in customField.options %}
-													<label class="radio">
-														<input type="radio" name="{{ field_name(attribute(form, fieldName)) }}" value="{{ option }}" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>
-														{{ option }}
-													</label>
-												{% endfor %}
-											{% endif %}
+									{% if form[fieldName] is defined %}
+										<div class="field">
+											<label class="label">{{ form_label(attribute(form, fieldName)) }}</label>
+											<div class="control">
+												{% if customField.type.value == 'input' %}
+													<input class="input" type="text" name="{{ field_name(attribute(form, fieldName)) }}" value="{{ field_value(attribute(form, fieldName)) }}" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>
+												{% elseif customField.type.value == 'textarea' %}
+													<textarea class="textarea" name="{{ field_name(attribute(form, fieldName)) }}" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>{{ field_value(attribute(form, fieldName)) }}</textarea>
+												{% elseif customField.type.value == 'date' %}
+													<input class="input birthday_field" name="{{ field_name(attribute(form, fieldName)) }}" value="{{ field_value(attribute(form, fieldName)) }}" type="text" placeholder="TT.MM.JJJJ" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>
+												{% elseif customField.type.value == 'checkbox' %}
+													{{ form_widget(attribute(form, fieldName)) }}
+												{% elseif customField.type.value == 'radio' %}
+													{% for option in customField.options %}
+														<label class="radio">
+															<input type="radio" name="{{ field_name(attribute(form, fieldName)) }}" value="{{ option }}" {% if not customField.optional %} required {% endif %} {{ autocomplete |raw }}>
+															{{ option }}
+														</label>
+													{% endfor %}
+												{% endif %}
+											</div>
+											{{ form_errors(attribute(form, fieldName)) }}
 										</div>
-										{{ form_errors(attribute(form, fieldName)) }}
-									</div>
+									{% endif %}
 								{% endif %}
 							{% endfor %}
 
 						</div>
 						<div class="column">
-							<div class="field">
-								<label class="label">Geburtstag des Teilnehmers<sup>*</sup>
-								</label>
-								<div class="control has-icons-left">
-									<input class="input birthday_field" name="{{ field_name(form.birthdate) }}" value="{{ field_value(form.birthdate) }}" type="text" placeholder="TT.MM.JJJJ" tabindex="20" required {{ autocomplete |raw }}>
-									<span class="icon is-small is-left">
-										<i class="fas fa-calendar"></i>
-									</span>
+						    {% if ruestzeit.isShowBirthday() %}
+								<div class="field">
+									<label class="label">Geburtstag des Teilnehmers<sup>*</sup>
+									</label>
+									<div class="control has-icons-left">
+										<input class="input birthday_field" name="{{ field_name(form.birthdate) }}" value="{{ field_value(form.birthdate) }}" type="text" placeholder="TT.MM.JJJJ" tabindex="20" required {{ autocomplete |raw }}>
+										<span class="icon is-small is-left">
+											<i class="fas fa-calendar"></i>
+										</span>
+									</div>
+									<p class="help">Pflichtfeld</p>
+									{{ form_errors(form.birthdate) }}
 								</div>
-								<p class="help">Pflichtfeld</p>
-								{{ form_errors(form.birthdate) }}
-							</div>
+							{% endif %}
 
 							{% if ruestzeit.isAskSchoolclass() %}
 								<div class="field">
@@ -357,51 +361,53 @@
 								</div>
 							{% endif %}
 
-							<div class="card">
-								<header class="card-header">
-									<p class="card-header-title">
-										Adresse
-									</p>
-								</header>
-								<div class="card-content">
-									<div class="field">
-										<label class="label">Strasse / Hausnummer<sup>*</sup>
-										</label>
-										<div class="control">
-											<input class="input" tabindex="30" name="{{ field_name(form.address) }}" value="{{ field_value(form.address) }}" type="text" placeholder="" required {{ autocomplete |raw }}>
-										</div>
-										<p class="help">Pflichtfeld</p>
-										{{ form_errors(form.address) }}
-									</div>
-
-									<div class="columns">
-										<div class="column">
-											<div class="field">
-												<label class="label">Postleitzahl<sup>*</sup>
-												</label>
-												<div class="control">
-													<input class="input" data-checkname="postalcode" tabindex="35" name="{{ field_name(form.postalcode) }}" value="{{ field_value(form.postalcode) }}" type="text" placeholder="" required {{ autocomplete |raw }}>
-												</div>
-												<p class="help">Pflichtfeld</p>
-												{{ form_errors(form.postalcode) }}
+							{% if ruestzeit.isShowRegistrationAddress() %}
+								<div class="card">
+									<header class="card-header">
+										<p class="card-header-title">
+											Adresse
+										</p>
+									</header>
+									<div class="card-content">
+										<div class="field">
+											<label class="label">Strasse / Hausnummer<sup>*</sup>
+											</label>
+											<div class="control">
+												<input class="input" tabindex="30" name="{{ field_name(form.address) }}" value="{{ field_value(form.address) }}" type="text" placeholder="" required {{ autocomplete |raw }}>
 											</div>
-
+											<p class="help">Pflichtfeld</p>
+											{{ form_errors(form.address) }}
 										</div>
-										<div class="column">
-											<div class="field">
-												<label class="label">Ort<sup>*</sup>
-												</label>
-												<div class="control">
-													<input class="input" tabindex="40" name="{{ field_name(form.city) }}" value="{{ field_value(form.city) }}" type="text" placeholder="" required {{ autocomplete |raw }}>
-												</div>
-												<p class="help">Pflichtfeld</p>
-												{{ form_errors(form.city) }}
-											</div>
 
+										<div class="columns">
+											<div class="column">
+												<div class="field">
+													<label class="label">Postleitzahl<sup>*</sup>
+													</label>
+													<div class="control">
+														<input class="input" data-checkname="postalcode" tabindex="35" name="{{ field_name(form.postalcode) }}" value="{{ field_value(form.postalcode) }}" type="text" placeholder="" required {{ autocomplete |raw }}>
+													</div>
+													<p class="help">Pflichtfeld</p>
+													{{ form_errors(form.postalcode) }}
+												</div>
+
+											</div>
+											<div class="column">
+												<div class="field">
+													<label class="label">Ort<sup>*</sup>
+													</label>
+													<div class="control">
+														<input class="input" tabindex="40" name="{{ field_name(form.city) }}" value="{{ field_value(form.city) }}" type="text" placeholder="" required {{ autocomplete |raw }}>
+													</div>
+													<p class="help">Pflichtfeld</p>
+													{{ form_errors(form.city) }}
+												</div>
+
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							{% endif %}
 						</div>
 					</div>
 
